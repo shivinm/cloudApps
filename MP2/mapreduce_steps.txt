@@ -1,0 +1,32 @@
+// create working directories
+mkdir mapreduce-tutorial
+cd mapreduce-tutorial
+mkdir dataset
+
+// get input data and put it on HDFS
+wget -c http://www.gutenberg.lib.md.us/2/2/6/2264/2264.txt -P dataset
+hadoop fs -mkdir -p /tutorial/input
+hadoop fs -put ./dataset/* /tutorial/input
+
+// get java map-reduce code to execute
+wget https://github.com/xldrx/mapreduce_examples/raw/master/tutorial/first_example/WordCount.java
+
+// compile java code
+mkdir build
+rm –rf ./build/* ./WordCount.jar
+export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
+hadoop com.sun.tools.javac.Main WordCount.java -d build
+jar -cvf WordCount.jar -C build/ ./
+
+// run the program
+hadoop jar WordCount.jar WordCount /tutorial/input /tutorial/output 
+
+// check the output
+hadoop fs -cat /tutorial/output/part*
+
+// (to download to local fs)
+hadoop fs -get /tutorial/output/part* .
+
+// clear output dir for future runs
+hadoop fs -rm -r -f /tutorial/output
+
