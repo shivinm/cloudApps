@@ -30,7 +30,7 @@ public class TitleCount extends Configured implements Tool {
     }
 
     @Override
-    public int run(String[] args) throws Exception {
+        public int run(String[] args) throws Exception {
         Job job = Job.getInstance(this.getConf(), "Title Count");
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
@@ -63,15 +63,15 @@ public class TitleCount extends Configured implements Tool {
         return everything.toString();
     }
 
-// <<< Don't Change
+    // <<< Don't Change
 
     public static class TitleCountMap extends Mapper<Object, Text, Text, IntWritable> {
         List<String> stopWords;
         String delimiters;
 
         @Override
-        protected void setup(Context context) throws IOException,InterruptedException {
-
+            protected void setup(Context context) throws IOException,InterruptedException {
+            
             Configuration conf = context.getConfiguration();
 
             String stopWordsPath = conf.get("stopwords");
@@ -83,8 +83,8 @@ public class TitleCount extends Configured implements Tool {
 
 
         @Override
-        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-
+            public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            
             String line = value.toString();
 	    StringTokenizer st = new StringTokenizer(line, delimiters);
 	    while (st.hasMoreTokens()) {
@@ -100,8 +100,8 @@ public class TitleCount extends Configured implements Tool {
 
     public static class TitleCountReduce extends Reducer<Text, IntWritable, Text, IntWritable> {
         @Override
-        public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-	
+            public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            
             int sum = 0;
             for (IntWritable val : values) {
                 // add the values for each key
