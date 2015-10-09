@@ -1,0 +1,39 @@
+-- Notes for running spark
+
+-- make sure maven is installed
+mvn -version
+
+-- create HDFS input and output dirs
+hadoop fs -mkdir -p /mllib-tutorial/input
+hadoop fs -mkdir -p /mllib-tutorial/output
+
+-- Run KMeans
+-- copy input data to HDFS
+hadoop fs -put data/mtcars.csv /mllib-tutorial/input
+
+-- build the code
+mvn clean package
+
+-- submit the KMeans application to spark
+spark-submit --class KMeansExample target/mllib.mp-1.0-SNAPSHOT.jar 3 /mllib-tutorial/input/mtcars.csv
+
+-- forward the log output to /dev/null to see the result
+spark-submit --class KMeansExample target/mllib.mp-1.0-SNAPSHOT.jar 3 /mllib-tutorial/input/mtcars.csv 2> /dev/null
+
+-- Run Naive Bayes
+
+-- prepare data
+head -615 data/pima-indians-diabetes.data > data/training.data
+tail -153 data/pima-indians-diabetes.data > data/test.data
+
+hadoop fs -put data/training.data /mllib-tutorial/input
+hadoop fs -put data/test.data /mllib-tutorial/input
+
+-- build code
+mvn clean package
+
+-- sumbit the Naive Bayes application to spark 
+spark-submit --class NaiveBayesExample target/mllib.mp-1.0-SNAPSHOT.jar /mllib-tutorial/input/training.data /mllibtutorial/input/test.data
+
+-- forward the log output to /dev/null to see the result
+spark-submit --class NaiveBayesExample target/mllib.mp-1.0-SNAPSHOT.jar /mllib-tutorial/input/training.data /mllibtutorial/input/test.data 2> /dev/null

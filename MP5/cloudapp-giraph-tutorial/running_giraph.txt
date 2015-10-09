@@ -1,0 +1,37 @@
+-- Notes for running giraph
+
+-- install maven
+
+wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+yum install apache-maven
+
+-- create HDFS
+
+hadoop fs -mkdir -p /giraph-tutorial/input
+hadoop fs -mkdir -p /giraph-tutorial/output
+
+
+-- build code (needs pom.xml)
+
+mvn clean package
+
+-- copy input graph to HDFS
+
+hadoop fs -put data/tiny2_graph.txt /giraph-tutorial/input
+
+-- run the graph application on the input data
+
+hadoop jar target/giraph-mp-1.0-SNAPSHOT-jar-with-dependencies.jar org.apache.giraph.GiraphRunner ConnectedComponentsComputation -vif org.apache.giraph.io.formats.IntIntNullTextInputFormat -vip /giraph-tutorial/input/tiny2_graph.txt -vof org.apache.giraph.io.formats.IdWithValueTextOutputFormat -op /giraph-tutorial/output/connected-components -w 1 -ca giraph.SplitMasterWorker=false
+
+-- check the output on HDFS
+
+hadoop fs -cat /giraph-tutorial/output/connected-components/*
+
+-- download file from HDFS
+
+hadoop fs -get /giraph-tutorial/output/connected-components/* .
+
+-- clean the output folder on HDFS before the next run
+
+hadoop fs -rm -r -f /giraph-tutorial/output/connected-components/*
+ 
